@@ -3,9 +3,10 @@ const client = new Discord.Client();
 const fs = require('fs');
 const moment = require('moment');
 const ms = require("ms");
-const prefix = '$';
+const prefix = 'prefix';
 client.on('ready',()=>{
   console.log(`im ${client.user.tag}, ready ...`)
+  console.log(`LayerTeamCoding Project (NUM1) (CREDIT)`)
 })
 
 const cool = [];
@@ -82,4 +83,4 @@ client.on('message', message => {
 })
 
 
-client.login('Nzk3ODk4NjgzMDMxMDkzMjQ5.X_tLDg.IzC63gpbkXVON0u-Q1SxzsuD2-M')
+client.login('TOKEN')
