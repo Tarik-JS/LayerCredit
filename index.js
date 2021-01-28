@@ -45,7 +45,9 @@ client.on('message', message => {
       message.channel.send(`**Type the verfiy number : \`${number}\`, you have 15 seconds**`).then(layer => {
         message.channel.awaitMessages(layer => layer.author.id === message.author.id, { max: 1, time: 15000 }).then(text => {
          if(!text.first()) return layer.delete(message.channel.send(`**The transfer has been canceled**`)) 
-
+          
+         if(text.first().content !== number) return layer.delete(message.channel.send(`**The transfer has been canceled**`));
+          
           if (text.first().content === number) {
             layer.delete();
             message.channel.send(`**💰 ${message.author.username}, has transferd \`$${money}\` to ${user.username}**`);
