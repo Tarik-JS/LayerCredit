@@ -11,6 +11,7 @@ client.on('ready',()=>{
 
 const cool = [];
 
+
 client.on('message', message => {
   if (message.author.bot) return;
   if (!message.channel.guild) return;
@@ -35,26 +36,43 @@ client.on('message', message => {
       if (member.bot) return message.channel.send(`**Bots cant have credits**`);
       if (user.id === message.author.id) return message.channel.send('**You cant transfer to your self**');
       if (credits[author].credits < money) return message.channel.send('**You dont have that much**');
-      var one = Math.floor(Math.random() * 9) + 1;
+ /*     var one = Math.floor(Math.random() * 9) + 1;
       var two = Math.floor(Math.random() * 9) + 1;
       var three = Math.floor(Math.random() * 9) + 1;
       var four = Math.floor(Math.random() * 9) + 1;
 
       var number = `${one}${two}${three}${four}`;
+*/
 
-      message.channel.send(`**Type the verfiy number : \`${number}\`, you have 15 seconds**`).then(layer => {
+const Captcha = require("captcha-generator-better");
+let captcha = new Captcha();
+      let percentToGet = 5;
+      let percent = (percentToGet / 100) * money;
+      let fees = '';
+      let newbalance = money - percent;
+if(money >= 1000) fees = `Fees: \`$${Math.floor(percent)}\`,`
+      message.channel.send(`**Write down the verification Number, ${fees} Amount: \`$${Math.floor(newbalance)}\`, You have 15s. **`, new Discord.MessageAttachment(captcha.JPEGStream, "captcha.jpeg")).then(layer => {
         message.channel.awaitMessages(layer => layer.author.id === message.author.id, { max: 1, time: 15000 }).then(text => {
          if(!text.first()) return layer.delete(message.channel.send(`**The transfer has been canceled**`)) 
           
-         if(text.first().content !== number) return layer.delete(message.channel.send(`**The transfer has been canceled**`));
+         if(text.first().content !== captcha.value) return layer.delete(message.channel.send(`**The transfer has been canceled**`));
           
-          if (text.first().content === number) {
+          if (text.first().content === captcha.value) {
             layer.delete();
-            message.channel.send(`**💰 ${message.author.username}, has transferd \`$${money}\` to ${user.username}**`);
-            credits[author].credits += (-money);
-            credits[user.id].credits += (+money);
+    if(money >= 1000){
+        let percentToGet = 5;
+        let percent = (percentToGet / 100) * money;
+        let newbalance = money - percent;
+        credits[author].credits += Math.floor((-money));
+        credits[user.id].credits += Math.floor((+newbalance));
+        message.channel.send(`**💰 ${message.author.username}, has transferd \`$${Math.floor(newbalance)}\` to ${user.username}**`);
+    } else {
+        credits[author].credits += Math.floor((-money));
+        credits[user.id].credits += Math.floor((+money));
+        message.channel.send(`**💰 ${message.author.username}, has transferd \`$${Math.floor(money)}\` to ${user.username}**`);
+    }
             fs.writeFile(path, JSON.stringify(credits, null, 5), function (err) { if (err) console.log(err) });
-          } else if (c.first().content !== number) {
+          } else if (c.first().content !== captcha.value) {
             layer.delete();
             message.channel.send(`**The transferd has been canceled**`);
           }
